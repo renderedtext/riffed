@@ -86,6 +86,18 @@ defmodule Riffed.Client do
           rv = GenServer.call(client_pid, {unquote(function_name), unquote(list_args)})
           unquote(struct_module).to_elixir(rv, unquote(reply_meta))
       end
+
+      def unquote(function_name)(options, unquote_splicing(arg_list))
+        when is_list(options) do
+
+          timeout = Keyword.get(options, :timeout) || 5000
+          client  = Keyword.get(options, :client) || __MODULE__
+
+          unquote_splicing(casts)
+
+          rv = GenServer.call(client, {unquote(function_name), unquote(list_args)}, timeout)
+          unquote(struct_module).to_elixir(rv, unquote(reply_meta))
+      end
     end
   end
 
